@@ -20,12 +20,31 @@ function index(req, res) {
 function show(req, res) {
     const id = parseInt(req.params.id);
 
-    const sql = 'SELECT * FROM posts WHERE id = ?';
+    const postSql = 'SELECT * FROM posts WHERE id = ?';
 
-    connection.query(sql, (id), (err, results) => {
+    const tagsSql = `
+    SELECT 
+        *
+    FROM
+        tags
+    JOIN 
+       post_tag ON post_tag.tag_id = tags.id
+    WHERE 
+       post_id = ?
+    `;
+
+    connection.query(postSql, [id], (err, postResults) => {
         if (err) return res.status(500).json({ error: 'Errore Database' });
-        if (results.length === 0) return res.status(404).json({ error: 'Post non trovato' });
-        res.json(results[0]);
+        if (postResults.length === 0) return res.status(404).json({ error: 'Post non trovato' });
+
+        const post = postResults[0];
+
+        connection.query(tagsSql, [id], (err, tagsResults) => {
+            if (err) return res.status(500).json({ error: 'Errore Database' });
+
+            post.tags = tagsResults.map(tag => tag.label);
+            res.json(post);
+        })
     })
 }
 
