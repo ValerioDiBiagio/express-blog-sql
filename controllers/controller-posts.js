@@ -1,15 +1,18 @@
 //importare posts
 const posts = require('../data/posts');
 
+// importare db
+const mysql = require('../data/db')
+
 
 // funzioni CRUD
 function index(req, res) {
     // valerio.get(); verificare errore 500 in postman
-    
+
     let postsFilter = posts;
-    
+
     // aggiungere filtro di ricerca per i tag
-    if(req.query.tag) {
+    if (req.query.tag) {
         postsFilter = posts.filter(post => post.tags.includes(req.query.tag));
     }
 
@@ -22,7 +25,7 @@ function show(req, res) {
     const post = posts.find(post => post.id === id);
 
     // status error
-    if(!post) {
+    if (!post) {
         res.status(404);
 
         return res.json({
@@ -36,13 +39,13 @@ function show(req, res) {
 
 
 function store(req, res) {
-    
+
     //stampare i dati in arrivo
     console.log(req.body);
-    
+
     // creazione del nuovo id incrementando l'id dell'ultimo elemento
     const newId = posts[posts.length - 1].id + 1;
-    
+
     // creazione del nuovo post
     const newPost = {
         id: newId,
@@ -63,12 +66,12 @@ function store(req, res) {
 }
 
 function update(req, res) {
-        
+
     const id = parseInt(req.params.id);
     const post = posts.find(post => post.id === id);
 
     // status error
-    if(!post) {
+    if (!post) {
         res.status(404);
 
         return res.json({
@@ -93,12 +96,12 @@ function update(req, res) {
 }
 
 function modify(req, res) {
-    
+
     const id = parseInt(req.params.id);
     const post = posts.find(post => post.id === id);
 
     // status error
-    if(!post) {
+    if (!post) {
         res.status(404);
 
         return res.json({
@@ -134,10 +137,10 @@ function modify(req, res) {
 function destroy(req, res) {
     const id = parseInt(req.params.id);
     const post = posts.find(post => post.id === id);
-    
-    
+
+
     // status error
-    if(!post) {
+    if (!post) {
         res.status(404);
 
         return res.json({
@@ -145,8 +148,8 @@ function destroy(req, res) {
             error: 'Not found',
             message: 'Post non trovato'
         })
-    } 
-    
+    }
+
     posts.splice(posts.indexOf(post), 1);
     console.log(posts);
     // cancellazione avvenuta con successso
@@ -154,4 +157,4 @@ function destroy(req, res) {
 }
 
 // esportare function
-module.exports = {index, show, store, update, modify, destroy};
+module.exports = { index, show, store, update, modify, destroy };
