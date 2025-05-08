@@ -2,22 +2,19 @@
 const posts = require('../data/posts');
 
 // importare db
-const mysql = require('../data/db')
+const mysql = require('../data/db');
+const connection = require('../data/db');
 
 
 // funzioni CRUD
 function index(req, res) {
-    // valerio.get(); verificare errore 500 in postman
 
-    let postsFilter = posts;
+    const sql = 'SELECT * FROM posts';
 
-    // aggiungere filtro di ricerca per i tag
-    if (req.query.tag) {
-        postsFilter = posts.filter(post => post.tags.includes(req.query.tag));
-    }
-
-    // post filtrati od originali
-    res.json(postsFilter);
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Posts non trovati' });
+        res.json(results);
+    })
 }
 
 function show(req, res) {
