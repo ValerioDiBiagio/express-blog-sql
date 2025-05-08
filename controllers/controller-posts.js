@@ -12,7 +12,7 @@ function index(req, res) {
     const sql = 'SELECT * FROM posts';
 
     connection.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: 'Posts non trovati' });
+        if (err) return res.status(500).json({ error: 'Post non trovati' });
         res.json(results);
     })
 }
@@ -133,24 +133,11 @@ function modify(req, res) {
 
 function destroy(req, res) {
     const id = parseInt(req.params.id);
-    const post = posts.find(post => post.id === id);
 
-
-    // status error
-    if (!post) {
-        res.status(404);
-
-        return res.json({
-            status: 404,
-            error: 'Not found',
-            message: 'Post non trovato'
-        })
-    }
-
-    posts.splice(posts.indexOf(post), 1);
-    console.log(posts);
-    // cancellazione avvenuta con successso
-    res.sendStatus(204);
+    connection.query('DELETE FROM posts WHERE id = ?', [id], (err) => {
+        if (err) return res.status(500).json({ error: 'Post non cancellato' });
+        res.sendStatus(204)
+    });
 }
 
 // esportare function
